@@ -1,6 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Exceptions;
-using Infrastructure.Data;
+using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,17 +8,17 @@ namespace Web.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly UserContext _context;
+        private readonly IUserRepository _userRepository;
 
-        public UsersController(UserContext context)
+        public UsersController(IUserRepository repository)
         {
-            _context = context;
+            _userRepository = repository;
         }
 
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.ToListAsync());
+            return View(await _userRepository.GetAllAsync());
         }
 
         // GET: Users/Details/5
@@ -29,8 +29,7 @@ namespace Web.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var user = await _userRepository.GetByIdAsync((int)id);
             if (user == null)
             {
                 throw new UserNotFoundException((int)id);
@@ -45,17 +44,20 @@ namespace Web.Controllers
             return View();
         }
 
-        // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        //POST: Users/Create
+        //To protect from overposting attacks, enable the specific properties you want to bind to.
+        //For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,HourValue,AddDate,Active,Id")] User user)
         {
+            if (!ModelState.IsValid)
+                return BadRequest("Enter required fields");
+
             if (ModelState.IsValid)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
+                await _userRepository.AddAsync(user);
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
@@ -69,7 +71,7 @@ namespace Web.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userRepository.GetByIdAsync((int)id);
             if (user == null)
             {
                 throw new UserNotFoundException((int)id);
@@ -84,6 +86,9 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Name,HourValue,AddDate,Active,Id")] User user)
         {
+            if (!ModelState.IsValid)
+                return BadRequest("Enter required fields");
+
             if (id != user.Id)
             {
                 return NotFound();
@@ -93,8 +98,7 @@ namespace Web.Controllers
             {
                 try
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                    await _userRepository.UpdateAsync(user);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -120,8 +124,7 @@ namespace Web.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var user = await _userRepository.GetByIdAsync((int)id);
             if (user == null)
             {
                 return NotFound();
@@ -135,19 +138,17 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userRepository.GetByIdAsync(id);
             if (user != null)
             {
-                _context.Users.Remove(user);
+                await _userRepository.RemoveAsync(user);
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool UserExists(int id)
         {
-            return _context.Users.Any(e => e.Id == id);
+            return _userRepository.GetByIdAsync(id) != null;
         }
     }
 }

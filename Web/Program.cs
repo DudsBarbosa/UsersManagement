@@ -14,9 +14,8 @@ namespace Web
             // Provides useful error information in the development environment.
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddCoreServices();
-
             // Add services to the container.
+            builder.Services.AddCoreServices();
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -45,6 +44,7 @@ namespace Web
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            app.UseRequestLocalization("pt-BR");
             app.Run();
         }
     }

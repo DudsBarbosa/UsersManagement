@@ -10,31 +10,31 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form id="userForm" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+                <input id="Name" asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="HourValue" class="control-label"></label>
-                <input asp-for="HourValue" class="form-control" />
+                <input id="HourValue" asp-for="HourValue" class="form-control" />
                 <span asp-validation-for="HourValue" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="AddDate" class="control-label"></label>
-                <input asp-for="AddDate" class="form-control" />
+                <input id="AddDate" asp-for="AddDate" class="form-control" />
                 <span asp-validation-for="AddDate" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Active" /> @Html.DisplayNameFor(model => model.Active)
+                    <input id="Active" class="form-check-input" asp-for="Active" /> @Html.DisplayNameFor(model => model.Active)
                 </label>
             </div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" id="Id" asp-for="Id" />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary" onclick="updateAsync();" />
             </div>
         </form>
     </div>
@@ -45,5 +45,14 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @* <script>
+        var userId = document.getElementById('Id').value;
+        console.log('userid', userId);
+        $('#userForm').submit(function () {
+            updateAsync(userId);
+        });
+    </script> *@
 }

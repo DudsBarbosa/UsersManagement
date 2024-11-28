@@ -2,7 +2,6 @@
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Web.Controllers
 {
@@ -26,13 +25,13 @@ namespace Web.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return BadRequest("Informe o id do usuário");
             }
 
             var user = await _userRepository.GetByIdAsync((int)id);
             if (user == null)
             {
-                throw new UserNotFoundException((int)id);
+                return BadRequest("Os detalhes do usuário não estão disponíveis");
             }
 
             return View(user);
@@ -67,15 +66,13 @@ namespace Web.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
-                return NotFound();
-            }
+                return BadRequest("Informe o id do usuário");
 
             var user = await _userRepository.GetByIdAsync((int)id);
+
             if (user == null)
-            {
-                throw new UserNotFoundException((int)id);
-            }
+                return BadRequest("Os detalhes do usuário não estão disponíveis");
+
             return View(user);
         }
 
@@ -90,27 +87,11 @@ namespace Web.Controllers
                 return BadRequest("Enter required fields");
 
             if (id != user.Id)
-            {
-                return NotFound();
-            }
+                return BadRequest("Informe o id do usuário");
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    await _userRepository.UpdateAsync(user);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _userRepository.UpdateAsync(user);
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
@@ -121,13 +102,13 @@ namespace Web.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return BadRequest("Informe o id do usuário");
             }
 
             var user = await _userRepository.GetByIdAsync((int)id);
             if (user == null)
             {
-                return NotFound();
+                return BadRequest("Os detalhes do usuário não estão disponíveis");
             }
 
             return View(user);
@@ -136,8 +117,13 @@ namespace Web.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
+            if (id == null)
+            {
+                return BadRequest("Informe o id do usuário");
+            }
+
             var user = await _userRepository.GetByIdAsync(id);
             if (user != null)
             {
@@ -146,7 +132,7 @@ namespace Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(int id)
+        private bool UserExists(int? id)
         {
             return _userRepository.GetByIdAsync(id) != null;
         }

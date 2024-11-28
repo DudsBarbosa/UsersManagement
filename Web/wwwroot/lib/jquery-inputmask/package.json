@@ -1,0 +1,12 @@
+{
+  "name": "jquery-inputmask",
+  "version": "1.0.1",
+  "description": "jquery input mask",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["jquery", "input", "mask"],
+  "author": "mugukamil",
+  "license": "ISC"
+}

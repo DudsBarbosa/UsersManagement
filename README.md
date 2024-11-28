@@ -25,7 +25,7 @@ Esta aplicação busca utilizar a abordagem Clean Architecture para organizar o có
 
 Clean Architecture coloca a lógica de negócios e o modelo de aplicativo no centro do aplicativo. Em vez de a lógica de negócios depender do acesso a dados ou de outras preocupações de infraestrutura, essa dependência é invertida: os detalhes de infraestrutura e implementação dependem do Application Core. Esta funcionalidade é conseguida através da definição de abstrações, ou interfaces, no núcleo da aplicação, que são depois implementadas por tipos definidos na camada de infraestrutura. Uma forma comum de visualizar esta arquitetura é utilizar uma série de círculos concêntricos, semelhante a uma cebola. A Figura 5-7 mostra um exemplo deste estilo de representação arquitetônica.
 
-https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/media/image5-7.png
+![eShopOnWeb home page screenshot]https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/media/image5-7.png
 
 Figura 1-1. Arquitetura limpa; visualização em cebola
 
